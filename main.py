@@ -40,18 +40,30 @@ def calculate_returns():
     print("In a bullish market, before tax, your {} would become {:.2f}. After tax, your {} would become {:.2f}".format(invested_amount,bull_return_pre,invested_amount, bull_return_post))
     print("In a base market, before tax, your {} would become {:.2f}. After tax, your {} would become {:.2f}".format(invested_amount,base_return_pre,invested_amount, base_return_post))
     print("In a bearish market, before tax, your {} would become {:.2f}. After tax, your {} would become {:.2f}".format(invested_amount,bear_return_pre,invested_amount, bear_return_post))
-    
+    return(capital_gains_tax, bull_return_post,base_return_post,bear_return_post)
+capital_gains_tax,bull_return_post,base_return_post,bear_return_post= calculate_returns()
 
 def fetch_sp500():
-    pass
-
+    #fetch data from sp500, return results from investing in SP500 with same invested_amount + hold_dur.
+    sp500_data = yf.Ticker("^GSPC").history((str(hold_dur)+"y"))
+    sp500_start = sp500_data.iloc[0,3]
+    sp500_end = sp500_data.iloc[-1,3]
+    sp500_annual_growth = ((sp500_end/sp500_start)**(1/hold_dur))-1
+    sp500_results = (invested_amount * (1+sp500_annual_growth)**hold_dur)
+    if invested_amount < sp500_results:
+        #capital gains tax only applies to profit.
+        sp500_post = sp500_results - ((sp500_results - invested_amount)*capital_gains_tax)
+    else:
+        sp500_post = sp500_results
+    print(sp500_data)
+    print("If you had invested in the S&P500, after taxes, your {} would've turned into {:.2f}".format(invested_amount,sp500_post))
 def display_result():
     #plot data comparisons
     pass
 
 def main():
     #get_user_inputs()
-    calculate_returns()
+    #calculate_returns()
     fetch_sp500()
     display_result()
 
