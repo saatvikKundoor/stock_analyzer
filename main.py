@@ -3,24 +3,44 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import yfinance as yf 
 
-invested_amount = 0
-hold_dur = 0
-bull_return = 0
-bear_return = 0
-base_return = 0
+
 def get_user_inputs():
     #user inputs for invested amount, hold duration, expected returns for bull/bear/base
-    invested_amount = float(input("How much are you investing?"))
-    hold_dur = int(input("How long will you be holding (years)?"))
-    bull_return = float(input("What is the expected return in a bullish market? (percent change)"))
-    bear_return = float(input("What is the expected return in a bearish market? (percent change)"))
-    base_return = float(input("What is the expected return in a bullish market? (percent change)"))
+    invested_amount = float(input("How much are you investing? "))
+    hold_dur = int(input("How long will you be holding (years)? "))
+    bull_return = float(input("What is the expected return in a bullish market? (percent change) "))/100
+    base_return = float(input("What is the expected return in a base market? (percent change) "))/100
+    bear_return = float(input("What is the expected return in a bearish market? (percent change) "))/100
     return(invested_amount,hold_dur,bull_return,bear_return,base_return)
 invested_amount,hold_dur,bull_return,bear_return,base_return = get_user_inputs()
 def calculate_returns():
     #returns pre and post tax returns based on inputs
-    print(invested_amount)
-    pass
+
+    #pre tax section
+    bull_return_pre = invested_amount * ((1+bull_return)**hold_dur)
+    bear_return_pre = invested_amount * ((1+bear_return)**hold_dur)
+    base_return_pre = invested_amount * ((1+base_return)**hold_dur)
+
+    #post tax section
+    capital_gains_tax = float(input("How much is your capital gains tax? (percent ex. 8) "))/100
+    if invested_amount < bull_return_pre:
+        bull_return_post = bull_return_pre - ((bull_return_pre -invested_amount) * capital_gains_tax)
+    else:
+        bull_return_post = bull_return_pre
+
+    if invested_amount < bear_return_pre:
+        bear_return_post = bear_return_pre - ((bear_return_pre - invested_amount) * capital_gains_tax)
+    else:
+        bear_return_post = bear_return_pre
+
+    if invested_amount < base_return_pre:
+        base_return_post = base_return_pre - ((base_return_pre - invested_amount) * capital_gains_tax)
+    else:
+        base_return_post = base_return_pre
+    print("In a bullish market, before tax, your {} would become {:.2f}. After tax, your {} would become {:.2f}".format(invested_amount,bull_return_pre,invested_amount, bull_return_post))
+    print("In a base market, before tax, your {} would become {:.2f}. After tax, your {} would become {:.2f}".format(invested_amount,base_return_pre,invested_amount, base_return_post))
+    print("In a bearish market, before tax, your {} would become {:.2f}. After tax, your {} would become {:.2f}".format(invested_amount,bear_return_pre,invested_amount, bear_return_post))
+    
 
 def fetch_sp500():
     pass
@@ -36,4 +56,3 @@ def main():
     display_result()
 
 main()
-
