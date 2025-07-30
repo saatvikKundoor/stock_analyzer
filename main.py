@@ -55,16 +55,17 @@ def fetch_sp500():
         sp500_post = sp500_results - ((sp500_results - invested_amount)*capital_gains_tax)
     else:
         sp500_post = sp500_results
-    print(sp500_data)
     print("If you had invested in the S&P500, after taxes, your {} would've turned into {:.2f}".format(invested_amount,sp500_post))
+    return(sp500_post)
+sp500_post = fetch_sp500()
 def display_result():
     #plot data comparisons
-    pass
+    markets = ['Bull','Bear','Base','S&P 500']
+    prices = [bull_return_post,bear_return_post,base_return_post,sp500_post]
+    plt.bar(markets,prices)
+    plt.title("A ${:.0f} Investment in Different Markets over {} years".format(invested_amount,hold_dur))
+    plt.xlabel("Market Types")
+    plt.ylabel("Stock Prices $")
+    plt.show()
 
-def main():
-    #get_user_inputs()
-    #calculate_returns()
-    fetch_sp500()
-    display_result()
-
-main()
+display_result()
